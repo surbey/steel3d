@@ -234,6 +234,13 @@
       
       var wall = new THREE.Mesh( wall_geometry, wall_material );
       wall.position.y = baseofworld + (y/2);
+      
+      var outlineMaterial = new THREE.MeshBasicMaterial( { color: 0x00ffff, side: THREE.BackSide } );
+      outlineMesh = new THREE.Mesh( geometry, outlineMaterial );
+      outlineMesh.scale.multiplyScalar( 1.05 );
+
+      wall.add( outlineMesh );
+
 
       return wall;
 
