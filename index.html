@@ -227,6 +227,12 @@
       var wall_geometry = new THREE.BoxGeometry( x, y, z );
       var wall_material= new THREE.MeshBasicMaterial( { color: wallcolor} );
       
+       var outlineMaterial = new THREE.MeshBasicMaterial( { color: 0x00ffff, side: THREE.BackSide } );
+      outlineMesh = new THREE.Mesh( geometry, outlineMaterial );
+      outlineMesh.scale.multiplyScalar( 1.05 );
+      
+      wall_material.add( outlineMesh );
+      
       //This should be refactored into features
       wall_material.side = THREE.DoubleSide;
       //
@@ -235,11 +241,7 @@
       var wall = new THREE.Mesh( wall_geometry, wall_material );
       wall.position.y = baseofworld + (y/2);
       
-      var outlineMaterial = new THREE.MeshBasicMaterial( { color: 0x00ffff, side: THREE.BackSide } );
-      outlineMesh = new THREE.Mesh( geometry, outlineMaterial );
-      outlineMesh.scale.multiplyScalar( 1.05 );
-
-      wall.add( outlineMesh );
+     
 
 
       return wall;
