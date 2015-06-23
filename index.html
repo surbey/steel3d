@@ -179,6 +179,10 @@
       scene.add(back);
       
       
+      var backedges = new THREE.WireframeHelper( back, 0x000000);
+      backedges.material.linewidth = 2;
+      scene.add(backedges);
+
 
       //wall 2
       left = buildWall(wall_thickness, height, depth);
@@ -186,12 +190,25 @@
 
       scene.add(left);
       
+      
+      
+      var leftedges = new THREE.WireframeHelper( left, 0x000000);
+      leftedges.material.linewidth = 2;
+      scene.add(leftedges);
+
 
       //wall 4
       right = buildWall(wall_thickness, height, depth);
       right.position.x = (width /2);
 
       scene.add(right);
+      
+      
+      
+      var rightedges = new THREE.WireframeHelper( right, 0x000000);
+      rightedges.material.linewidth = 2;
+      scene.add(rightedges);
+
       
       
       //ceiling
