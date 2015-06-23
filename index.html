@@ -162,6 +162,14 @@
       front.position.z = (depth /2);
 
       scene.add(front);
+
+      var wireedges = new THREE.WireframeHelper( front, 0x0000ff);
+      wireedges.material.linewidth = 2;
+
+      scene.add(wireedges);
+
+
+      
     
 
       //wall 3
