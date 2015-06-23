@@ -234,10 +234,7 @@
       var wall = new THREE.Mesh( wall_geometry, wall_material );
       wall.position.y = baseofworld + (y/2);
       
-     var edges = new THREE.WireframeHelper( wall, 0x0000ff);
-        edges.material.linewidth = 2;
-
-        scene.add(edges);}
+     
 
 
       return wall;
