@@ -31,7 +31,7 @@
       var back = new THREE.Mesh();
       var roof = new THREE.Mesh();
 
-      var color;
+      var wallcolor = 0xD3D3D3;
       var baseofworld = 0;
       var wall_thickness = .1;
       var width = 1;
@@ -220,12 +220,18 @@
 
       } 
 
-
+      //This function creates every plane.
+      
       var buildWall = function (x,y,z) {
 
       var wall_geometry = new THREE.BoxGeometry( x, y, z );
-      var wall_material= new THREE.MeshBasicMaterial( { color: 0x297447 } );
+      var wall_material= new THREE.MeshBasicMaterial( { color: wallcolor} );
+      
+      //This should be refactored into features
       wall_material.side = THREE.DoubleSide;
+      //
+      
+      
       var wall = new THREE.Mesh( wall_geometry, wall_material );
       wall.position.y = baseofworld + (y/2);
 
