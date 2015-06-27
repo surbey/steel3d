@@ -10,7 +10,32 @@
 
   </head>
   <body>
+
+    <div id="menu">
+    <table>
+    <tr>
+    <td>Height </td>
+    <td><input type='range' id='height' min='1' max='75' value='25' oninput="adjustHeight(value)"/></td>
+    </tr>
     
+    <tr>
+    <td>Width</td>
+    <td><input type='range' id='width'  min='1' max='75' value = '35' oninput="adjustWidth(value)"/></td>
+    </tr>
+
+    <tr>
+    <td>Depth</td>  
+    <td><input type='range' id='depth'  min='1' max='75' value = '50'oninput="adjustDepth(value)"/></td>
+    </tr>
+   
+
+
+    </table>
+  </div>
+   <div id="world">
+  Use your mouse wheel to zoom in and out and these sliders to change dimensions.
+
+   
     <script src="js/three.min.js"></script>
     <script src="js/controls/OrbitControls.js"></script>
     
@@ -31,32 +56,36 @@
       var back = new THREE.Mesh();
       var roof = new THREE.Mesh();
 
+      var house = [];
+      var onRight = [];
+      var onLeft = [];
+
       var wallcolor = 0xD3D3D3;
       var baseofworld = 0;
       var wall_thickness = .1;
       var width = 1;
       var height = 1;
       var depth = 1;
-
-      var scene = new THREE.Scene();
-      var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 500 );
-
-
-
-      var renderer = new THREE.WebGLRenderer();
-      renderer.setSize( (window.innerWidth/2), (window.innerHeight/2) );
-      document.body.appendChild( renderer.domElement );
       
 
+      var scene = new THREE.Scene();
+       var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 500 );
+      var renderer = new THREE.WebGLRenderer();
+      renderer.setSize( (window.innerWidth/2), (window.innerHeight/2) );
+
+
+      document.body.appendChild( renderer.domElement );
+      
+      renderer
       
       var controls = new THREE.OrbitControls( camera, renderer.domElement );        
       
-      controls.maxPolarAngle = (Math.PI/2) -.1; 
+      //controls.maxPolarAngle = (Math.PI/2) -.1; 
 
-      camera.position.x = 0;
-      camera.position.y = 15;
+      camera.position.x = 25;
+      camera.position.y = 35;
       camera.position.z = 50;
-
+      camera.lookAt( scene.position );
       
       var buildGround = function() {
 
@@ -78,6 +107,22 @@
       scene.add(ground);  
 
       }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
       var buildSky = function () {
@@ -110,45 +155,29 @@
       render();
 
 
-/*
-      var buildPylon = function (height,width,thickness) {
-        
-        pylon = buildWall(height, width, thickness);
-        scene.add(pylon);
-        
-      }
-
-
-      var adjustPylonHeight = function (height) {
-
-        pylon.scale.y = height;
-        pylon.position.y = .1 + (height/2);
-  
-      }
-
-
-
-      var adjustPylonWidth = function (width) {
-
-        pylon.scale.x = width;
-        
-      }
-
-      var adjustPylonDepth = function (depth) {
-
-        pylon.scale.z = depth;
-        
-      }
+   
+ 
 
 
 
 
-*/      
-      var keepAboveGround = function (object,height) {
+
+
+
+
+
+
+
+
+
+      
+
+      var keepAboveGround = function (object) {
 
             
 
-        object.position.y = .1 + (height/2);
+        object.position.y = baseofworld + (height/2);
+        
 
       }
 
@@ -164,7 +193,7 @@
       scene.add(front);
 
       var frontedges = new THREE.WireframeHelper( front, 0x000000);
-      frontedges.material.linewidth = 2;
+      frontedges.material.linewidth = 5;
 
       scene.add(frontedges);
 
@@ -180,7 +209,7 @@
       
       
       var backedges = new THREE.WireframeHelper( back, 0x000000);
-      backedges.material.linewidth = 2;
+      backedges.material.linewidth = 5;
       scene.add(backedges);
 
 
@@ -193,7 +222,8 @@
       
       
       var leftedges = new THREE.WireframeHelper( left, 0x000000);
-      leftedges.material.linewidth = 2;
+      leftedges.material.linewidth = 15;
+
       scene.add(leftedges);
 
 
@@ -206,7 +236,7 @@
       
       
       var rightedges = new THREE.WireframeHelper( right, 0x000000);
-      rightedges.material.linewidth = 2;
+      rightedges.material.linewidth = 5;
       scene.add(rightedges);
 
       
@@ -245,20 +275,28 @@
 
       } 
 
-      //This function creates every plane.
+
+
+
+      //This function creates every wall.
       
       var buildWall = function (x,y,z) {
 
       var wall_geometry = new THREE.BoxGeometry( x, y, z );
-      var wall_material= new THREE.MeshBasicMaterial( { color: wallcolor} );
      
+      
+       var wall_material = wrapWall();
+     console.log(wall_material);
       wall_material.side = THREE.DoubleSide;
       //
-      
+     
       
       var wall = new THREE.Mesh( wall_geometry, wall_material );
-      wall.position.y = baseofworld + (y/2);
       
+      //wall.position.y = baseofworld + (y/2);
+      keepAboveGround(wall);
+
+      house.push(wall);
      
 
 
@@ -266,8 +304,11 @@
 
 
       } 
+      var wrapWall = function () {
 
-
+	var wrapper = new THREE.MeshBasicMaterial( {color: wallcolor});
+	return wrapper;
+      }	
       var buildFloor = function () {
 
 
@@ -295,25 +336,28 @@
       }
 
 
-      var adjustHeight = function (height) {
 
-        left.scale.y = height;
-        keepAboveGround(left, height);
-        
-        right.scale.y = height;
-        keepAboveGround(right, height);
-        
-        front.scale.y = height;
-        keepAboveGround(front, height);
-        
-        back.scale.y = height;
-        keepAboveGround(back, height);
+      var adjustHeight = function (hchange) {
 
+        height = hchange;
+               
         roof.position.y = height;
+
+        for(i = 0; i < house.length; i++) {
+          
+          house[i].scale.y = height;
+          keepAboveGround(house[i]);
+           
+        }
+
+
+        
   
       }
 
-      var adjustWidth = function (width) {
+      var adjustWidth = function (wchange) {
+
+        width = wchange;
 
         left.position.x = ((width /2) * -1);
         right.position.x = (width /2);
@@ -325,7 +369,9 @@
   
       }
 
-      var adjustDepth = function (depth) {
+      var adjustDepth = function (dchange) {
+
+        depth = dchange;
 
         left.scale.z = depth;
         
@@ -339,81 +385,28 @@
   
       }
 
+     
 
 
-
-
-    /*  var buildPlatform = function () {
-
-      //This builds the platform the building sits on.
-
-      var floortexture = THREE.ImageUtils.loadTexture( "textures/stone.jpg" );
-      floortexture.wrapS = floortexture.wrapT = THREE.RepeatWrapping;
-      floortexture.repeat.set(2, 2);
-
-      var floormaterial = new THREE.MeshBasicMaterial( { color: 0xffffff, map: floortexture } );
-
-
-      var floorGeometry = new THREE.PlaneGeometry(housewidth*1.5, housedepth*1.25, 1, 1);
-
-      floor = new THREE.Mesh(floorGeometry, floormaterial);
-
-      floor.position.y = baseofworld +.1;
-      floor.position.x = 0;
-      floor.rotation.x = - Math.PI / 2;
-      floor.receiveShadow = true;
-      scene.add(floor);  
-      }*/
-
-
-      $(function() {
-        $('input#height').change(function(event) {
-          adjustHeight(event.target.value);
-          
-
-        });
-
-        $('input#width').change(function(event) {
-          adjustWidth(event.target.value);
-          
-
-        });
-
-         $('input#depth').change(function(event) {
-          adjustDepth(event.target.value);
-          
-
-        });
-
-
-    });
-
+ 
+   
+	
       buildGround();
       buildSky();
       buildHouse();
       //buildPylon(1,1,1);
-      adjustHeight(25);
-      adjustWidth(10);
+      
+      
+      
+      adjustWidth(35);
       adjustDepth(50);
+      adjustHeight(25);
 
 
       
     </script>
+</div>
 
-    <table>
-      <tr>
-        <td>Height</td>
-        <td>Width</td>
-        <td>Depth</td>
-      </tr>
-    <tr>
-    <td><input type='range' id='height' min='1' max='100' value='25' oninput="adjustHeight(value)"/></td>
-    <td><input type='range' id='width'  min='1' max='100' value = '10' oninput="adjustWidth(value)"/></td>
-    <td><input type='range' id='depth'  min='1' max='100' value = '50'oninput="adjustDepth(value)"/></td>
-
-    </tr>
-    </table>
-  
 
   </body>
 </html>
