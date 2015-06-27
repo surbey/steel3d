@@ -27,6 +27,11 @@
     <td>Depth</td>  
     <td><input type='range' id='depth'  min='1' max='75' value = '50'oninput="adjustDepth(value)"/></td>
     </tr>
+
+    <tr>
+    <td>Color</td>  
+    <td><input type='color' id='wallcolor'oninput="adjustColor(value)"/></td>
+    </tr>
    
 
 
@@ -286,7 +291,7 @@
      
       
        var wall_material = wrapWall();
-     console.log(wall_material);
+     
       wall_material.side = THREE.DoubleSide;
       //
      
@@ -385,7 +390,24 @@
   
       }
 
-     
+     var adjustColor = function (cchange) {
+
+        
+
+        wallcolor = "0x" + cchange.slice(1);
+
+        
+
+        for(i = 0; i < house.length; i++) {
+          
+          house[i].material.color.setHex(wallcolor);
+           
+        }
+
+
+
+
+     }
 
 
  
