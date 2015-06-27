@@ -1,6 +1,4 @@
 <html>
-  <head>
-    <title>Steel3D</title>
     <style>
       body { margin: 0; }
       canvas { width: 100%; height: 100% }
@@ -29,10 +27,14 @@
     </tr>
 
     <tr>
-    <td>Color</td>  
-    <td><input type='color' id='wallcolor'oninput="adjustColor(value)"/></td>
+    <td>Wall Color</td>  
+    <td><input type='color' id='wallcolor'oninput="adjustColor(value, walls)"/></td>
     </tr>
    
+    <tr>
+    <td>Roof Color</td>
+    <td><input type='color' id='wallcolor'oninput="adjustColor(value, houseTop)"/></td>
+    </tr>
 
 
     </table>
@@ -64,6 +66,8 @@
       var house = [];
       var onRight = [];
       var onLeft = [];
+      var houseTop = [];	
+      var walls = [];
 
       var wallcolor = 0xD3D3D3;
       var baseofworld = 0;
@@ -74,7 +78,7 @@
       
 
       var scene = new THREE.Scene();
-       var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 500 );
+       var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 800 );
       var renderer = new THREE.WebGLRenderer();
       renderer.setSize( (window.innerWidth/2), (window.innerHeight/2) );
 
@@ -85,8 +89,10 @@
       
       var controls = new THREE.OrbitControls( camera, renderer.domElement );        
       
-      //controls.maxPolarAngle = (Math.PI/2) -.1; 
+      controls.maxPolarAngle = (Math.PI/2) -.1; 
+      
 
+      controls.maxDistance = 200;
       camera.position.x = 25;
       camera.position.y = 35;
       camera.position.z = 50;
@@ -101,7 +107,7 @@
       var fieldmaterial = new THREE.MeshBasicMaterial( { color: 0xffffff, map: grasstexture } );
 
       fieldmaterial.side = THREE.DoubleSide;
-      var groundGeometry = new THREE.PlaneGeometry(300, 300, 1, 1);
+      var groundGeometry = new THREE.PlaneGeometry(500, 500, 1, 1);
 
       ground = new THREE.Mesh(groundGeometry, fieldmaterial);
 
@@ -139,7 +145,7 @@
       var skymaterial = new THREE.MeshBasicMaterial( { color: 0xffffff, map: skytexture } );
       
       skymaterial.side = THREE.DoubleSide;
-      var skyGeometry = new THREE.SphereGeometry( 200, 100, 100 );
+      var skyGeometry = new THREE.SphereGeometry( 600, 100, 100 );
       
 
       sky = new THREE.Mesh(skyGeometry, skymaterial);
@@ -198,7 +204,7 @@
       scene.add(front);
 
       var frontedges = new THREE.WireframeHelper( front, 0x000000);
-      frontedges.material.linewidth = 5;
+      frontedges.material.linewidth = 2;
 
       scene.add(frontedges);
 
@@ -214,7 +220,7 @@
       
       
       var backedges = new THREE.WireframeHelper( back, 0x000000);
-      backedges.material.linewidth = 5;
+      backedges.material.linewidth = 2;
       scene.add(backedges);
 
 
@@ -227,7 +233,7 @@
       
       
       var leftedges = new THREE.WireframeHelper( left, 0x000000);
-      leftedges.material.linewidth = 15;
+      leftedges.material.linewidth = 2;
 
       scene.add(leftedges);
 
@@ -241,7 +247,7 @@
       
       
       var rightedges = new THREE.WireframeHelper( right, 0x000000);
-      rightedges.material.linewidth = 5;
+      rightedges.material.linewidth = 2;
       scene.add(rightedges);
 
       
@@ -252,6 +258,8 @@
       roof = buildTop(width, wall_thickness, depth);
       //top = buildTop(width, wall_thickness, depth);
       roof.position.y = height;
+      houseTop.push(roof);
+
       scene.add(roof);
 
     
@@ -302,7 +310,7 @@
       keepAboveGround(wall);
 
       house.push(wall);
-     
+      walls.push(wall);
 
 
       return wall;
@@ -390,7 +398,7 @@
   
       }
 
-     var adjustColor = function (cchange) {
+     var adjustColor = function (cchange, anarray) {
 
         
 
@@ -398,9 +406,9 @@
 
         
 
-        for(i = 0; i < house.length; i++) {
+        for(i = 0; i < anarray.length; i++) {
           
-          house[i].material.color.setHex(wallcolor);
+          anarray[i].material.color.setHex(wallcolor);
            
         }
 
@@ -409,7 +417,7 @@
 
      }
 
-
+      
  
    
 	
