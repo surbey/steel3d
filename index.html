@@ -27,20 +27,13 @@
     </tr>
 
     <tr>
-    <td> Roof Pitch </td>
-    <td><input type='range' id='pitch' min='5' max='25' value = '15' oninput="changePitch(value)" /></td>
-    </tr>
-
-
-
-    <tr>
     <td>Wall Color</td>  
-    <td><input type='color' id='wallcolor'oninput="adjustColor(value, walls)" value='#D3D3D3'/></td>
+    <td><input type='color' id='wallcolor'oninput="adjustColor(value, walls)"/></td>
     </tr>
    
     <tr>
     <td>Roof Color</td>
-    <td><input type='color' id='wallcolor'oninput="adjustColor(value, houseTop)" value='#9c7151'></td>
+    <td><input type='color' id='wallcolor'oninput="adjustColor(value, houseTop)"/></td>
     </tr>
 
 
@@ -64,12 +57,12 @@
       
        
 
-      var front;
-      var left;
-      var right;
-      var back;
-      var roofLeft = new THREE.Mesh();
-      var roofRight = new THREE.Mesh();
+      var front = new THREE.Mesh();
+      var left = new THREE.Mesh();
+      var right = new THREE.Mesh();
+      var back = new THREE.Mesh();
+      var roof = new THREE.Mesh();
+
       var house = [];
       var onRight = [];
       var onLeft = [];
@@ -83,19 +76,6 @@
       var height = 1;
       var depth = 1;
       
-      var pitch = 10;
-      var hypot = 5;
-      var base = 4;
-      var oside = 3;
-
-
-      var a;
-      var b;
-      var c;
-      var d;
-
-
-
 
       var scene = new THREE.Scene();
        var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 800 );
@@ -139,6 +119,23 @@
 
       }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       var buildSky = function () {
 
       var skytexture = THREE.ImageUtils.loadTexture( "textures/sky.jpg" );
@@ -160,6 +157,9 @@
 
       var render = function () {
         requestAnimationFrame( render );
+
+        
+
         renderer.render(scene, camera);
       };
 
@@ -171,10 +171,17 @@
 
 
 
-	var toRadians = function (angle) {
-  		return angle * (Math.PI / 180);
-	}
 
+
+
+
+
+
+
+
+
+
+      
 
       var keepAboveGround = function (object) {
 
@@ -185,33 +192,31 @@
 
       }
 
-      var setVars = function() {
-	front = house[0];
-	left = house[1];
-	right = house[2];
-	back = house[3];
-}
-      
 
       var buildHouse = function () {
-	
-	 //build all the walls
-        for(i = 0; i < 4; i++) {
-           
-	 house[i] = buildWall(1, 1, wall_thickness); 
-	 scene.add(house[i]);
-        }
-  	 	
 
-      setVars();
-     
+          
 
+      //wall 1
+      front = buildWall(width, height, wall_thickness);
+      front.position.z = (depth /2);
+
+      scene.add(front);
 
       var frontedges = new THREE.WireframeHelper( front, 0x000000);
       frontedges.material.linewidth = 2;
 
       scene.add(frontedges);
 
+
+      
+    
+
+      //wall 3
+      back = buildWall(width, height , wall_thickness);
+      back.position.z = ((depth /2) * -1);
+
+      scene.add(back);
       
       
       var backedges = new THREE.WireframeHelper( back, 0x000000);
@@ -219,13 +224,28 @@
       scene.add(backedges);
 
 
+      //wall 2
+      left = buildWall(wall_thickness, height, depth);
+      left.position.x = ((width /2) * -1);
+
+      scene.add(left);
+      
+      
       
       var leftedges = new THREE.WireframeHelper( left, 0x000000);
       leftedges.material.linewidth = 2;
 
       scene.add(leftedges);
 
-            
+
+      //wall 4
+      right = buildWall(wall_thickness, height, depth);
+      right.position.x = (width /2);
+
+      scene.add(right);
+      
+      
+      
       var rightedges = new THREE.WireframeHelper( right, 0x000000);
       rightedges.material.linewidth = 2;
       scene.add(rightedges);
@@ -234,29 +254,22 @@
       
       //ceiling
 
-      roofLeft = buildTop(width, wall_thickness, depth);
-         
 
-      houseTop.push(roofLeft);
-      scene.add(roofLeft);
+      roof = buildTop(width, wall_thickness, depth);
+      //top = buildTop(width, wall_thickness, depth);
+      roof.position.y = height;
+      houseTop.push(roof);
 
-      roofRight = buildTop(width, wall_thickness, depth);
-	
-      houseTop.push(roofRight);
-      scene.add(roofRight);
+      scene.add(roof);
 
-      } 
+    
 
-
-
-
-      function changePitch (cdegrees) {
-
-	pitch = cdegrees;
-	adjustTop();
-      
-       
       }
+
+
+
+
+
 
 
 
@@ -293,10 +306,10 @@
       
       var wall = new THREE.Mesh( wall_geometry, wall_material );
       
-      
+      //wall.position.y = baseofworld + (y/2);
       keepAboveGround(wall);
 
-      //house.push(wall);
+      house.push(wall);
       walls.push(wall);
 
 
@@ -309,13 +322,39 @@
 	var wrapper = new THREE.MeshBasicMaterial( {color: wallcolor});
 	return wrapper;
       }	
+      var buildFloor = function () {
+
+
+      //add floor
+
+      var floortexture = THREE.ImageUtils.loadTexture( "textures/wood_floor.jpg" );
+      floortexture.wrapS = floortexture.wrapT = THREE.RepeatWrapping;
+      floortexture.repeat.set(1, 1);
+
+      var floormaterial = new THREE.MeshBasicMaterial( { color: 0xffffff, map: floortexture } );
+
+
+      var floorGeometry = new THREE.PlaneGeometry(width, depth, 1, 1);
+
+      floor = new THREE.Mesh(floorGeometry, floormaterial);
+
+      floor.position.y = baseofworld +.1;
+      floor.position.x = 0;
+      floor.rotation.x = - Math.PI / 2;
+      floor.receiveShadow = true;
+      scene.add(floor);  
+
+
+      
+      }
+
+
 
       var adjustHeight = function (hchange) {
 
         height = hchange;
                
-        //roofLeft.position.y = height;
-        //roofRight.position.y = height;
+        roof.position.y = height;
 
         for(i = 0; i < house.length; i++) {
           
@@ -324,21 +363,8 @@
            
         }
 
-	}
-      var adjustTop = function () {
 
-	
-        base = width /2;	
-	oside = Math.tan(pitch) * base;
-	hypot = Math.sqrt( (base * base) + (oside + oside));
-	roofLeft.scale.x = hypot;
-	roofRight.scale.x = hypot;
-	roofLeft.rotation.z = toRadians(pitch);
-	roofRight.rotation.z =( toRadians(pitch) * -1);
-
-	
-
-
+        
   
       }
 
@@ -350,40 +376,25 @@
         right.position.x = (width /2);
                   
         front.scale.x = width;
+        
         back.scale.x = width;
-
-
-
-        roofLeft.scale.x = (width/2);
-        roofLeft.position.x = (width/4)* -1;
-        roofRight.scale.x = (width/2);
-	roofRight.position.x = (width/4); 
+        roof.scale.x = width; 
   
       }
 
       var adjustDepth = function (dchange) {
-        
-	depth = dchange;
-	
 
-	
+        depth = dchange;
+
         left.scale.z = depth;
         
-        right.scale.z = dchange;
+        right.scale.z = depth;
         
 
         front.position.z = (depth /2);
         
         back.position.z = ((depth /2) * -1);
-        roofLeft.scale.z = depth;
-        roofRight.scale.z = depth;
- 
-        console.log(front.position.z);
-	console.log(depth);
-	console.log(dchange);
-	console.log(left.scale.z);
-	console.log(back.position.z);
-
+        roof.scale.z = depth;
   
       }
 
@@ -412,9 +423,15 @@
 	
       buildGround();
       buildSky();
-      buildHouse();;
+      buildHouse();
+      //buildPylon(1,1,1);
       
-      adjustTop();
+      
+      
+      adjustWidth(35);
+      adjustDepth(50);
+      adjustHeight(25);
+
 
       
     </script>
