@@ -28,12 +28,12 @@
 
     <tr>
     <td>Wall Color</td>  
-    <td><input type='color' id='wallcolor'oninput="adjustColor(value, walls)"/></td>
+    <td><input type='color' value ='#D3D3D3' id='wallcolor'oninput="adjustColor(value, walls)"/></td>
     </tr>
    
     <tr>
     <td>Roof Color</td>
-    <td><input type='color' id='wallcolor'oninput="adjustColor(value, houseTop)"/></td>
+    <td><input type='color' value ='#9c7151'id='wallcolor'oninput="adjustColor(value, houseTop)"/></td>
     </tr>
 
 
@@ -64,8 +64,8 @@
       var roof = new THREE.Mesh();
 
       var house = [];
-      var onRight = [];
-      var onLeft = [];
+      var onEnd = [];
+      var onSide = [];
       var houseTop = [];	
       var walls = [];
 
@@ -75,7 +75,7 @@
       var width = 1;
       var height = 1;
       var depth = 1;
-      
+      var pitch = 5;
 
       var scene = new THREE.Scene();
        var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 800 );
@@ -171,7 +171,75 @@
 
 
 
+      var updateBuilding = function () {
+        console.log("here");
+        
 
+        roof.position.y = height;
+
+        for(i = 0; i < house.length; i++) {
+          
+          house[i].scale.y = height;
+          keepAboveGround(house[i]);
+           
+        }
+
+        var dummy = false;
+        var dummy2 = false;
+
+        //resizes front and back
+
+        for(i = 0; i < onEnd.length; i++) {
+          
+
+          onEnd[i].scale.x = width;
+          onEnd[i].scale.y = height;
+          
+          if (dummy) {
+
+          onEnd[i].position.z = ((depth /2) * -1);
+
+          }
+
+          else {
+
+          onEnd[i].position.z = (depth /2);
+          dummy = true;
+
+          }
+          
+        }
+
+
+        //updates sides
+        for (i =0; i < onSide.length; i++) {
+
+          onSide[i].scale.z = depth;
+          onSide[i].scale.y = height;
+          
+          if (dummy2) {
+
+          onSide[i].position.x = ((width /2) * -1);
+
+          }
+
+          else {
+
+          onSide[i].position.x = (width /2);
+          dummy2 = true;
+
+          }
+          
+        }
+
+
+
+
+
+
+
+
+      }
 
 
 
@@ -200,7 +268,7 @@
       //wall 1
       front = buildWall(width, height, wall_thickness);
       front.position.z = (depth /2);
-
+      onEnd.push(front);
       scene.add(front);
 
       var frontedges = new THREE.WireframeHelper( front, 0x000000);
@@ -215,7 +283,7 @@
       //wall 3
       back = buildWall(width, height , wall_thickness);
       back.position.z = ((depth /2) * -1);
-
+      onEnd.push(back);
       scene.add(back);
       
       
@@ -227,7 +295,7 @@
       //wall 2
       left = buildWall(wall_thickness, height, depth);
       left.position.x = ((width /2) * -1);
-
+      onSide.push(left);
       scene.add(left);
       
       
@@ -241,7 +309,7 @@
       //wall 4
       right = buildWall(wall_thickness, height, depth);
       right.position.x = (width /2);
-
+      onSide.push(right);
       scene.add(right);
       
       
@@ -258,6 +326,8 @@
       roof = buildTop(width, wall_thickness, depth);
       //top = buildTop(width, wall_thickness, depth);
       roof.position.y = height;
+      roof.rotation.z = (toRad(pitch) * -1);
+
       houseTop.push(roof);
 
       scene.add(roof);
@@ -266,7 +336,10 @@
 
       }
 
-
+      function toRad(Value) {
+    /** Converts numeric degrees to radians */
+    return Value * Math.PI / 180;
+}
 
 
 
@@ -354,14 +427,7 @@
 
         height = hchange;
                
-        roof.position.y = height;
-
-        for(i = 0; i < house.length; i++) {
-          
-          house[i].scale.y = height;
-          keepAboveGround(house[i]);
-           
-        }
+        updateBuilding();
 
 
         
@@ -372,13 +438,7 @@
 
         width = wchange;
 
-        left.position.x = ((width /2) * -1);
-        right.position.x = (width /2);
-                  
-        front.scale.x = width;
-        
-        back.scale.x = width;
-        roof.scale.x = width; 
+        updateBuilding();
   
       }
 
@@ -386,15 +446,7 @@
 
         depth = dchange;
 
-        left.scale.z = depth;
-        
-        right.scale.z = depth;
-        
-
-        front.position.z = (depth /2);
-        
-        back.position.z = ((depth /2) * -1);
-        roof.scale.z = depth;
+        updateBuilding();
   
       }
 
@@ -424,14 +476,10 @@
       buildGround();
       buildSky();
       buildHouse();
-      //buildPylon(1,1,1);
+     
       
       
-      
-      adjustWidth(35);
-      adjustDepth(50);
-      adjustHeight(25);
-
+     
 
       
     </script>
