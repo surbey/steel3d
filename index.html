@@ -167,7 +167,14 @@
 
 
    
- 
+      var updateTop = function () {
+
+	roof.position.y = (height + ((width/2) * toRad(pitch)));
+	console.log(roof.position.y);
+	
+	roof.scale.z = depth;
+	roof.scale.x = width;
+}
 
 
 
@@ -175,7 +182,6 @@
         console.log("here");
         
 
-        roof.position.y = height;
 
         for(i = 0; i < house.length; i++) {
           
@@ -194,7 +200,7 @@
 
           onEnd[i].scale.x = width;
           onEnd[i].scale.y = height;
-          
+
           if (dummy) {
 
           onEnd[i].position.z = ((depth /2) * -1);
@@ -233,7 +239,7 @@
         }
 
 
-
+	updateTop();
 
 
 
@@ -425,7 +431,7 @@
 
       var adjustHeight = function (hchange) {
 
-        height = hchange;
+        height = parseInt(hchange);
                
         updateBuilding();
 
@@ -436,7 +442,7 @@
 
       var adjustWidth = function (wchange) {
 
-        width = wchange;
+        width = parseInt(wchange);
 
         updateBuilding();
   
@@ -444,7 +450,7 @@
 
       var adjustDepth = function (dchange) {
 
-        depth = dchange;
+        depth = parseInt(dchange);
 
         updateBuilding();
   
