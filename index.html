@@ -36,7 +36,11 @@
     <td><input type='color' value ='#9c7151'id='wallcolor'oninput="adjustColor(value, houseTop)"/></td>
     </tr>
 
-
+    <tr>
+    <td> RoofType </td>
+    <td><input type='range' id='roofType' min='0' max = '2' value = '2' oninput="adjustRoofType(value)"/></td>
+    </tr>
+ 
     </table>
   </div>
    <div id="world">
@@ -49,6 +53,9 @@
     <script type="text/javascript" src="js/jquery142.min.js"></script>
 
 
+    <script src="js/ConvexGeometry.js"></script>
+    <script src="js/Detector.js"></script>
+    <script src="js/stats.min.js"></script>
 
 
 
@@ -67,7 +74,8 @@
       var onEnd = [];
       var onSide = [];
       var houseTop = [];	
-      var walls = [];
+      var walls = [];	
+
 
       var wallcolor = 0xD3D3D3;
       var baseofworld = 0;
@@ -76,6 +84,8 @@
       var height = 1;
       var depth = 1;
       var pitch = 5;
+      var rooftype = 1;
+
 
       var scene = new THREE.Scene();
        var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 800 );
@@ -170,7 +180,6 @@
       var updateTop = function () {
 
 	roof.position.y = (height + ((width/2) * toRad(pitch)));
-	console.log(roof.position.y);
 	
 	roof.scale.z = depth;
 	roof.scale.x = width;
@@ -179,7 +188,6 @@
 
 
       var updateBuilding = function () {
-        console.log("here");
         
 
 
@@ -239,7 +247,6 @@
         }
 
 
-	updateTop();
 
 
 
@@ -329,16 +336,13 @@
       //ceiling
 
 
-      roof = buildTop(width, wall_thickness, depth);
-      //top = buildTop(width, wall_thickness, depth);
-      roof.position.y = height;
-      roof.rotation.z = (toRad(pitch) * -1);
 
-      houseTop.push(roof);
 
-      scene.add(roof);
 
-    
+      height = 20;
+      width = 35;
+      depth = 50;
+      updateBuilding();    
 
       }
 
@@ -470,12 +474,97 @@
            
         }
 
+}
+
+      var adjustRoofType = function (rchange) {
+	
+	roofType = parseInt(rchange);
 
 
+	var dimensions = [];
 
+	console.log(roofType);
+	if (roofType === 1) {
+	
+	dimensions = onePointRoof();
+}
+	else {
+	 
+	dimensions = flatRoof();
      }
 
-      
+
+      addTop(dimensions);
+
+}
+
+
+     var addTop = function (dimensions) {
+
+
+	var materials = [
+          new THREE.MeshBasicMaterial( { color: 0x9c7151 } ),
+	  new THREE.MeshBasicMaterial( { color: 0x000000, width:4, wireframe: true } )
+	];
+    
+
+	 var object = THREE.SceneUtils.createMultiMaterialObject( new THREE.ConvexGeometry( dimensions ), materials );
+                                object.position.set( 0, 0, 0 );
+                                houseTop.push(object);
+                                scene.add( object );
+
+
+	
+
+}    
+
+     var flatRoof = function () {
+	console.log("flat");
+
+	var x = width / 2;
+        var y = height;
+        var z = depth / 2;
+
+
+
+	var points = [
+          new THREE.Vector3( x, y, z),
+          new THREE.Vector3( (x * -1), y, z),
+          new THREE.Vector3( x, y,(z * -1)),
+          new THREE.Vector3((x * -1), y,( z * -1)),
+          ]
+
+
+                                return points;
+
+}
+
+
+
+
+     var onePointRoof = function () {
+                      console.log("onePointRoof");       
+				var x = width / 2;
+				var y = height;
+				var z = depth / 2;
+
+
+                                
+				var points = [
+                                        new THREE.Vector3( x, y, z),
+                                        new THREE.Vector3( (x * -1), y, z),
+					new THREE.Vector3( x, y,(z * -1)),
+                                        new THREE.Vector3((x * -1), y,( z * -1)),
+					new THREE.Vector3(0, (y * 1.50), 0),
+
+                                ];
+
+
+				return points;
+
+
+
+} 
  
    
 	
