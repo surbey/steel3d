@@ -36,10 +36,15 @@
     <td><input type='color' value ='#9c7151'id='wallcolor'oninput="adjustColor(value, houseTop)"/></td>
     </tr>
 
+
+    <form>
     <tr>
     <td> RoofType </td>
-    <td><input type='range' id='roofType' min='0' max = '2' value = '2' oninput="adjustRoofType(value)"/></td>
+    <td><input type='radio' name = 'roofType' value ='0' onclick="adjustRoofType(value)" checked> Flat Roof </td>
+    <td><input type='radio' name = 'roofType' value ='1' onclick="adjustRoofType(value)"> One Point Roof </td> 
+    </form>
     </tr>
+    
  
     </table>
   </div>
@@ -75,7 +80,7 @@
       var onSide = [];
       var houseTop = [];	
       var walls = [];	
-
+      var dimensions = [];      
 
       var wallcolor = 0xD3D3D3;
       var baseofworld = 0;
@@ -84,7 +89,7 @@
       var height = 1;
       var depth = 1;
       var pitch = 5;
-      var rooftype = 1;
+      var roofType = 0;
 
 
       var scene = new THREE.Scene();
@@ -246,10 +251,9 @@
           
         }
 
-
-
-
-
+        //console.log(roofType);
+        adjustRoofType(roofType);
+        console.log(roofType);
 
 
       }
@@ -477,13 +481,14 @@
 }
 
       var adjustRoofType = function (rchange) {
-	
+
+       	
 	roofType = parseInt(rchange);
 
 
-	var dimensions = [];
+	//var dimensions = [];
 
-	console.log(roofType);
+	
 	if (roofType === 1) {
 	
 	dimensions = onePointRoof();
@@ -493,14 +498,16 @@
 	dimensions = flatRoof();
      }
 
-
-      addTop(dimensions);
+      addTop();
+      //addTop(dimensions);
 
 }
 
 
-     var addTop = function (dimensions) {
+     var addTop = function () {
 
+      
+      scene.remove(roof);
 
 	var materials = [
           new THREE.MeshBasicMaterial( { color: 0x9c7151 } ),
@@ -508,10 +515,10 @@
 	];
     
 
-	 var object = THREE.SceneUtils.createMultiMaterialObject( new THREE.ConvexGeometry( dimensions ), materials );
-                                object.position.set( 0, 0, 0 );
-                                houseTop.push(object);
-                                scene.add( object );
+	 roof = THREE.SceneUtils.createMultiMaterialObject( new THREE.ConvexGeometry( dimensions ), materials );
+                                roof.position.set( 0, 0, 0 );
+                                houseTop.push(roof);
+                                scene.add( roof );
 
 
 	
@@ -570,8 +577,10 @@
 	
       buildGround();
       buildSky();
+     // console.log(dimensions);
+     // console.log(dimensions);
       buildHouse();
-     
+           
       
       
      
