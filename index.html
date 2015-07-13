@@ -28,7 +28,8 @@
 
     <tr>
     <td>Wall Color</td>  
-    <td><input type='color' value ='#D3D3D3' id='wallcolor'oninput="adjustColor(value, walls)"/></td>
+    <td><input type='color' value ='#D3D3D3' id='wallcolor'oninput="adjustColor(value, 
+      walls)"/></td>
     </tr>
    
     <tr>
@@ -37,15 +38,21 @@
     </tr>
 
 
-    <form>
     <tr>
-    <td> RoofType </td>
-    <td><input type='radio' name = 'roofType' value ='0' onclick="adjustRoofType(value)" checked> Flat Roof </td>
-    <td><input type='radio' name = 'roofType' value ='1' onclick="adjustRoofType(value)"> One Point Roof </td> 
-    </form>
+    <td> RoofTypes </td>
     </tr>
-    
- 
+
+
+    <tr>
+    <td><input type='radio' name = 'roofType' value ='0' onclick="adjustRoofType(value)" checked> Flat Roof </td>
+    <td><input type='radio' name = 'roofType' value ='1' onclick="adjustRoofType(value)"> Center Roof </td> 
+    </tr>
+    <tr>
+      <td><input type='radio' name = 'roofType' value ='2' onclick="adjustRoofType(value)"> Split Roof</td> 
+      <td><input type='radio' name = 'roofType' value ='3' onclick="adjustRoofType(value)"> Slant Roof</td>
+    </tr>
+
+  
     </table>
   </div>
    <div id="world">
@@ -73,7 +80,7 @@
       var left = new THREE.Mesh();
       var right = new THREE.Mesh();
       var back = new THREE.Mesh();
-      var roof = new THREE.Mesh();
+      var roof;
 
       var house = [];
       var onEnd = [];
@@ -83,13 +90,19 @@
       var dimensions = [];      
 
       var wallcolor = 0xD3D3D3;
+      var roofcolor = 0x9c7151;
+      //var roofcolor = 0x0080c0;
       var baseofworld = 0;
       var wall_thickness = .1;
       var width = 1;
       var height = 1;
+
       var depth = 1;
       var pitch = 5;
       var roofType = 0;
+
+
+
 
 
       var scene = new THREE.Scene();
@@ -182,13 +195,8 @@
 
 
    
-      var updateTop = function () {
 
-	roof.position.y = (height + ((width/2) * toRad(pitch)));
-	
-	roof.scale.z = depth;
-	roof.scale.x = width;
-}
+
 
 
 
@@ -253,7 +261,7 @@
 
         //console.log(roofType);
         adjustRoofType(roofType);
-        console.log(roofType);
+       // console.log(roofType);
 
 
       }
@@ -363,17 +371,17 @@
 
 
 
-      var buildTop = function (x,y,z) {
-
-      var wall_geometry = new THREE.BoxGeometry( x, y, z );
-      var wall_material= new THREE.MeshBasicMaterial( { color: 0x9c7151 } );
-      var wall = new THREE.Mesh( wall_geometry, wall_material );
-      
-
-      return wall;
-
-
-      } 
+//      var buildTop = function (x,y,z) {
+//
+//      var wall_geometry = new THREE.BoxGeometry( x, y, z );
+//      var wall_material= new THREE.MeshBasicMaterial( { color: 0x9c7151 } );
+//      var wall = new THREE.Mesh( wall_geometry, wall_material );
+//      
+//
+//      return wall;
+//
+//
+//     } 
 
 
 
@@ -467,18 +475,35 @@
      var adjustColor = function (cchange, anarray) {
 
         
+      if (anarray === walls) {
 
-        wallcolor = "0x" + cchange.slice(1);
-
-        
-
+        //console.log(wallcolor);
+        wallcolor = parseInt("0x" + cchange.slice(1));
+        //console.log(wallcolor);
         for(i = 0; i < anarray.length; i++) {
           
           anarray[i].material.color.setHex(wallcolor);
            
         }
+        //console.log(wallcolor);
+
+      }
+      else {
+        
+        //console.log(cchange);
+
+        roofcolor = parseInt("0x" + cchange.slice(1));
+        updateBuilding();
+                
+      }
+
+
+        
 
 }
+
+      
+
 
       var adjustRoofType = function (rchange) {
 
@@ -486,17 +511,34 @@
 	roofType = parseInt(rchange);
 
 
-	//var dimensions = [];
+	switch(roofType) {
+
+      case 0:
+        dimensions = flatRoof();
+        break;
+      case 1:
+        dimensions = onePointRoof();
+        break;
+      case 2:
+        dimensions = splitRoof();
+        break;
+      case 3:
+        dimensions = slantRoof();
+        break;
+      default:
+        dimensions = flatRoof();
+
+  }
 
 	
-	if (roofType === 1) {
-	
-	dimensions = onePointRoof();
-}
-	else {
-	 
-	dimensions = flatRoof();
-     }
+//	if (roofType === 1) {
+//	
+//	dimensions = onePointRoof();
+//}
+//	else {
+//	 
+//	dimensions = flatRoof();
+//     }
 
       addTop();
       //addTop(dimensions);
@@ -504,15 +546,18 @@
 }
 
 
+
      var addTop = function () {
 
       
       scene.remove(roof);
-
+      console.log(roofcolor);
 	var materials = [
-          new THREE.MeshBasicMaterial( { color: 0x9c7151 } ),
+          new THREE.MeshBasicMaterial( { color: roofcolor } ),
 	  new THREE.MeshBasicMaterial( { color: 0x000000, width:4, wireframe: true } )
 	];
+
+      console.log(roofcolor);
     
 
 	 roof = THREE.SceneUtils.createMultiMaterialObject( new THREE.ConvexGeometry( dimensions ), materials );
@@ -525,8 +570,63 @@
 
 }    
 
+
+      var slantRoof = function () {
+
+
+      var x = width / 2;
+        var y = height;
+        var z = depth / 2;
+
+
+
+      var points = [
+          new THREE.Vector3( x, y, z),
+          new THREE.Vector3( (x * -1), y, z),
+          new THREE.Vector3( x, y,(z * -1)),
+          new THREE.Vector3((x * -1), y,( z * -1)),
+          new THREE.Vector3((x * -1), y*1.25, (z * -1)),
+          new THREE.Vector3((x * -1), y*1.25, z),
+          ]
+
+
+                                return points;
+
+
+    }
+
+
+
+
+    var splitRoof = function () {
+
+
+      var x = width / 2;
+        var y = height;
+        var z = depth / 2;
+
+
+
+      var points = [
+          new THREE.Vector3( x, y, z),
+          new THREE.Vector3( (x * -1), y, z),
+          new THREE.Vector3( x, y,(z * -1)),
+          new THREE.Vector3((x * -1), y,( z * -1)),
+          new THREE.Vector3(0, y*1.25, (z * -1)),
+          new THREE.Vector3(0, y*1.25, z),
+          new THREE.Vector3(0, y*1.25, 0),
+          ]
+
+
+                                return points;
+
+
+    }
+
+
+
      var flatRoof = function () {
-	console.log("flat");
+	
 
 	var x = width / 2;
         var y = height;
@@ -550,7 +650,7 @@
 
 
      var onePointRoof = function () {
-                      console.log("onePointRoof");       
+                           
 				var x = width / 2;
 				var y = height;
 				var z = depth / 2;
@@ -562,7 +662,7 @@
                                         new THREE.Vector3( (x * -1), y, z),
 					new THREE.Vector3( x, y,(z * -1)),
                                         new THREE.Vector3((x * -1), y,( z * -1)),
-					new THREE.Vector3(0, (y * 1.50), 0),
+					new THREE.Vector3(0, (y * 1.25), 0),
 
                                 ];
 
