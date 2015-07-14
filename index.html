@@ -10,14 +10,21 @@
   <body>
 
     <div id="menu">
+    
+    <details> 
+
+    <summary>Dimensions</summary>
+
     <table>
     <tr>
-    <td>Height </td>
+    <td>Height</td>
     <td><input type='range' id='height' min='1' max='75' value='25' oninput="adjustHeight(value)"/></td>
     </tr>
     
     <tr>
     <td>Width</td>
+
+
     <td><input type='range' id='width'  min='1' max='75' value = '35' oninput="adjustWidth(value)"/></td>
     </tr>
 
@@ -25,6 +32,15 @@
     <td>Depth</td>  
     <td><input type='range' id='depth'  min='1' max='75' value = '50'oninput="adjustDepth(value)"/></td>
     </tr>
+  </table>
+</details>
+
+
+    <details>
+      <summary>Colors</summary>
+      <table>
+
+
 
     <tr>
     <td>Wall Color</td>  
@@ -38,9 +54,15 @@
     </tr>
 
 
-    <tr>
-    <td> RoofTypes </td>
-    </tr>
+    </table>
+
+    </details>
+
+
+    <details>
+    <summary>Roof Settings</summary>
+    <table>
+    
 
 
     <tr>
@@ -51,9 +73,10 @@
       <td><input type='radio' name = 'roofType' value ='2' onclick="adjustRoofType(value)"> Split Roof</td> 
       <td><input type='radio' name = 'roofType' value ='3' onclick="adjustRoofType(value)"> Slant Roof</td>
     </tr>
-
-  
     </table>
+  </details>
+  
+    
   </div>
    <div id="world">
   Use your mouse wheel to zoom in and out and these sliders to change dimensions.
