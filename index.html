@@ -63,7 +63,19 @@
     <summary>Roof Settings</summary>
     <table>
     
+    <tr>
 
+    <td>Overhang</td>
+    </tr>
+
+    <tr>  
+    <td>Sides<input type='range' value ='0' min='0' max ='5' id='sideoverhang'oninput="adjustOverhang(value, 
+      0)"/></td>
+    </tr>
+   
+    <tr>  
+    <td>Ends<input type='range' value ='0' min='0' max ='5' id='endoverhang'oninput="adjustOverhang(value, 1)"/></td>
+    </tr>
 
     <tr>
     <td><input type='radio' name = 'roofType' value ='0' onclick="adjustRoofType(value)" checked> Flat Roof </td>
@@ -75,6 +87,9 @@
     </tr>
     </table>
   </details>
+  
+
+
   
     
   </div>
@@ -124,7 +139,8 @@
       var pitch = 5;
       var roofType = 0;
 
-
+      var overhang_ends = 0;
+      var overhang_sides = 0;
 
 
 
@@ -169,12 +185,6 @@
       scene.add(ground);  
 
       }
-
-
-
-
-
-
 
 
 
@@ -282,9 +292,9 @@
           
         }
 
-        //console.log(roofType);
+        
         adjustRoofType(roofType);
-       // console.log(roofType);
+       
 
 
       }
@@ -388,7 +398,25 @@
 
 
 
+  var adjustOverhang = function (ochange, num) {
 
+
+    if (num === 0) {
+      
+      overhang_sides = parseInt(ochange);
+      updateBuilding();
+
+    }
+
+    else {
+
+      overhang_ends = parseInt(ochange);
+      updateBuilding();
+
+    }
+
+
+  }
 
 
 
@@ -500,20 +528,20 @@
         
       if (anarray === walls) {
 
-        //console.log(wallcolor);
+        
         wallcolor = parseInt("0x" + cchange.slice(1));
-        //console.log(wallcolor);
+        
         for(i = 0; i < anarray.length; i++) {
           
           anarray[i].material.color.setHex(wallcolor);
            
         }
-        //console.log(wallcolor);
+        
 
       }
       else {
         
-        //console.log(cchange);
+        
 
         roofcolor = parseInt("0x" + cchange.slice(1));
         updateBuilding();
@@ -574,13 +602,13 @@
 
       
       scene.remove(roof);
-      console.log(roofcolor);
+      
 	var materials = [
           new THREE.MeshBasicMaterial( { color: roofcolor } ),
 	  new THREE.MeshBasicMaterial( { color: 0x000000, width:4, wireframe: true } )
 	];
 
-      console.log(roofcolor);
+      
     
 
 	 roof = THREE.SceneUtils.createMultiMaterialObject( new THREE.ConvexGeometry( dimensions ), materials );
@@ -597,9 +625,9 @@
       var slantRoof = function () {
 
 
-      var x = width / 2;
+      var x = ((width / 2) + overhang_sides);
         var y = height;
-        var z = depth / 2;
+        var z = ((depth / 2) + overhang_ends);
 
 
 
@@ -624,9 +652,9 @@
     var splitRoof = function () {
 
 
-      var x = width / 2;
+      var x = ((width / 2) + overhang_sides);
         var y = height;
-        var z = depth / 2;
+        var z = ((depth / 2) + overhang_ends);
 
 
 
@@ -651,9 +679,9 @@
      var flatRoof = function () {
 	
 
-	var x = width / 2;
+	var x = ((width / 2) + overhang_sides);
         var y = height;
-        var z = depth / 2;
+        var z = ((depth / 2)  + overhang_ends);
 
 
 
@@ -674,9 +702,9 @@
 
      var onePointRoof = function () {
                            
-				var x = width / 2;
+				var x = ((width / 2) + overhang_sides);
 				var y = height;
-				var z = depth / 2;
+				var z = ((depth / 2)  + overhang_ends);
 
 
                                 
@@ -700,8 +728,7 @@
 	
       buildGround();
       buildSky();
-     // console.log(dimensions);
-     // console.log(dimensions);
+     
       buildHouse();
            
       
