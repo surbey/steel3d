@@ -4,22 +4,21 @@ var z;
 
 
 var setRoofDimensions = function() {
+  
   x = ((width / 2) + overhang_sides);
   y = height;
   z = ((depth / 2) + overhang_ends);
+
 }
 
 var onePointRoof = function () {
-  //var x = ((width / 2) + overhang_sides);
-  //var y = height;
-  //var z = ((depth / 2)  + overhang_ends);
-
+  
   var points = [
     new THREE.Vector3( x, y, z),
     new THREE.Vector3( (x * -1), y, z),
     new THREE.Vector3( x, y,(z * -1)),
     new THREE.Vector3((x * -1), y,( z * -1)),
-    new THREE.Vector3(0, (y * 1.25), 0),
+    new THREE.Vector3(0, (y * 1.5), 0),
   ];
 
   return points;
@@ -27,10 +26,7 @@ var onePointRoof = function () {
 }
 
 var flatRoof = function () {
-  //var x = ((width / 2) + overhang_sides);
-  //var y = height;
-  //var z = ((depth / 2)  + overhang_ends);
-
+  
   var points = [
     new THREE.Vector3( x, y, z),
     new THREE.Vector3( (x * -1), y, z),
@@ -43,18 +39,15 @@ var flatRoof = function () {
 }
 
 var splitRoof = function () {
-  //var x = ((width / 2) + overhang_sides);
-  //var y = height;
-  //var z = ((depth / 2) + overhang_ends);
-
+  
   var points = [
     new THREE.Vector3( x, y, z),
     new THREE.Vector3( (x * -1), y, z),
     new THREE.Vector3( x, y,(z * -1)),
     new THREE.Vector3((x * -1), y,( z * -1)),
-    new THREE.Vector3(0, y*1.25, (z * -1)),
-    new THREE.Vector3(0, y*1.25, z),
-    new THREE.Vector3(0, y*1.25, 0),
+    new THREE.Vector3(0, y*1.5, (z * -1)),
+    new THREE.Vector3(0, y*1.5, z),
+    new THREE.Vector3(0, y*1.5, 0),
   ];
 
   return points;
@@ -62,17 +55,14 @@ var splitRoof = function () {
   }
 
 var slantRoof = function () {
-  //var x = ((width / 2) + overhang_sides);
-  //var y = height;
-  //var z = ((depth / 2) + overhang_ends);
-
+  
   var points = [
     new THREE.Vector3( x, y, z),
     new THREE.Vector3( (x * -1), y, z),
     new THREE.Vector3( x, y,(z * -1)),
     new THREE.Vector3((x * -1), y,( z * -1)),
-    new THREE.Vector3((x * -1), y*1.25, (z * -1)),
-    new THREE.Vector3((x * -1), y*1.25, z),
+    new THREE.Vector3((x * -1), y*1.5, (z * -1)),
+    new THREE.Vector3((x * -1), y*1.5, z),
   ];
 
 return points;

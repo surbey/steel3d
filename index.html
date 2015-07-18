@@ -86,7 +86,10 @@
       <summary>Extras</summary>
       <table>
         <tr>
-          <td><button id='horseButton' onclick="addHorse()"> Add a horse! </button></td>
+          <td> Do you want a surprise?</td>
+        </tr>
+        <tr>
+          <td><button id='horseButton' onclick="addHorse()">...Click Me </button></td>
         </tr>
       </table>
       </details>
@@ -108,6 +111,7 @@
     <script src="js/OBJLoader.js"></script>
     <script src="js/stats.min.js"></script>
     <script src="builders/roof_types.js"></script>
+    <script src="js/THREEx.KeyboardState.js"></script>
 
 
 
@@ -117,6 +121,12 @@
        
 
       var front = new THREE.Mesh();
+      var frontedges;
+      var backedges;
+      var rightedges;
+      var leftedges;
+
+
       var left = new THREE.Mesh();
       var right = new THREE.Mesh();
       var back = new THREE.Mesh();
@@ -131,7 +141,6 @@
 
       var wallcolor = 0xD3D3D3;
       var roofcolor = 0x9c7151;
-      //var roofcolor = 0x0080c0;
       var baseofworld = 0;
       var wall_thickness = .1;
       var width = 1;
@@ -144,6 +153,11 @@
       var overhang_ends = 0;
       var overhang_sides = 0;
 
+      var model = new THREE.Object3D();
+      var modelDirection = "west";
+
+      var keyboard = new THREEx.KeyboardState();
+
 
 
       var scene = new THREE.Scene();
@@ -154,7 +168,7 @@
 
       document.body.appendChild( renderer.domElement );
       
-      renderer
+      //renderer
       
       var controls = new THREE.OrbitControls( camera, renderer.domElement );        
       
@@ -192,7 +206,11 @@
       var addHorse = function () {
 
 
+        scene.remove(front);
         
+        scene.remove(frontedges);
+
+        alert("A wild horse appears! Use your keyboard to move around. W = North, S = South, A = West, D = East");
 
         var directionalLight = new THREE.DirectionalLight( 0xffeedd, 2 );
         directionalLight.position.set( 0, 2, 3 );
@@ -201,10 +219,7 @@
         var loader = new THREE.JSONLoader();
         loader.load("models/horse.js", modelLoadedCallback);
         
-        //var loader = new THREE.OBJLoader();
-        //loader.load("obj/iron-man.obj",function ( obj ) {
-        //scene.add( obj );
-        //});
+        
 
       }
 
@@ -259,14 +274,15 @@
     
     /* Create the wrapper, model, to scale and rotate the object. */
     
-    model = new THREE.Object3D();
+   
     model.add(object);
     model.scale.set(scale,scale,scale);
     rotateX = rotateY = 0;
     scene.add(model);
-    model.position.y +=4;
-    model.position.x +=35;
-    render();
+    
+    moveModel(modelDirection);
+ 
+    animate();
 
 }
 
@@ -345,15 +361,124 @@
 
 
 
-      var render = function () {
-        requestAnimationFrame( render );
+
+
+
+
+
+
+
+
+
+
+
+      var modelPosition = [0, 4, 15];
+
+
+      var moveModel = function (dchange) {
+
+        modelDirection = dchange;
+
+        switch(modelDirection) {
+
+          case "north":
+            
+            model.rotation.y = toRad(180);
+            modelPosition[2] -=.25;
+          
+          break;
+
+          case "south":
+            
+            model.rotation.y = toRad(0);
+            modelPosition[2] +=.25;
+          break;
+
+          case "west":
+          
+          model.rotation.y = toRad(-90);
+          modelPosition[0] -=.25;
+          break;
+
+          case "east":
+          
+          model.rotation.y = toRad(90);
+          modelPosition[0] +=.25;
+          break;
+          default:
+          console.log("You are Directionless");
+
+        }
+        
+        
+        model.position.x = parseInt(modelPosition[0]);
+        model.position.y = parseInt(modelPosition[1]);
+        model.position.z = parseInt(modelPosition[2]);
 
         
+        
 
+      }
+
+
+
+
+      var update = function () {
+
+        
+        if ( keyboard.pressed("W")) {
+          
+          
+          moveModel("north");
+
+        }
+    
+        if ( keyboard.pressed("S")) {
+          
+          moveModel("south");
+
+        }
+    
+        if ( keyboard.pressed("A")) {
+          
+          moveModel("west");
+
+        }
+  
+        if ( keyboard.pressed("D")) {
+          
+          moveModel("east");
+
+        }
+     
+      }
+
+
+
+
+
+
+
+    var animate = function () {
+    requestAnimationFrame( animate );
+    render();   
+    update();
+}
+
+
+
+      
+
+      var render = function () {
+      
         renderer.render(scene, camera);
       };
 
-      render();
+      animate();
+
+
+
+
 
 
    
@@ -460,7 +585,7 @@
       onEnd.push(front);
       scene.add(front);
 
-      var frontedges = new THREE.WireframeHelper( front, 0x000000);
+      frontedges = new THREE.WireframeHelper( front, 0x000000);
       frontedges.material.linewidth = 2;
 
       scene.add(frontedges);
@@ -475,7 +600,7 @@
       scene.add(back);
       
       
-      var backedges = new THREE.WireframeHelper( back, 0x000000);
+      backedges = new THREE.WireframeHelper( back, 0x000000);
       backedges.material.linewidth = 2;
       scene.add(backedges);
 
@@ -487,7 +612,7 @@
       
       
       
-      var leftedges = new THREE.WireframeHelper( left, 0x000000);
+      leftedges = new THREE.WireframeHelper( left, 0x000000);
       leftedges.material.linewidth = 2;
 
       scene.add(leftedges);
@@ -500,7 +625,7 @@
       
       
       
-      var rightedges = new THREE.WireframeHelper( right, 0x000000);
+      rightedges = new THREE.WireframeHelper( right, 0x000000);
       rightedges.material.linewidth = 2;
       scene.add(rightedges);
 
